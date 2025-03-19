@@ -24,13 +24,13 @@ const getAllUsers = asyncWrapper(async (req, res, next)=> {
 
 
 const register = asyncWrapper(async (req, res, next)=> {
-   let {fname, lname, email, password} = req.body;
+   let {fname, lname, email, password, role} = req.body;
    // get All Courses From Database
    // const courses = await Course.find()
    // Password Hashing
    // bcrypt.hash(s, salt) => s -> Script, salt -> Random String To Make The Hashing Algorithm Unpredictable 
    const hashedPassword = await bcrypt.hash(password, 10)
-   const user = new userquery(fname, lname, email, hashedPassword, "token");
+   const user = new userquery(fname, lname, email, hashedPassword, "token", role || "USER", req.file.filename);
 
    await user.userQuery(`SELECT * FROM users WHERE email='${email}';`).then(result => {
       if (result.length > 0) {
@@ -41,7 +41,7 @@ const register = asyncWrapper(async (req, res, next)=> {
 
    // Generate JWT token
    // jwt.sign(payload, SecretOrPrivateKey)
-   const token = await generateJWT({email: user.email})
+   const token = await generateJWT({email: user.email, role: user.role})
    console.log(token);
    user.token = token;
 
@@ -73,7 +73,7 @@ const login = asyncWrapper(async (req, res, next) => {
    }
    delete result[0].password
    if (user && isMatched) {
-      const token = await generateJWT({email: user.email});
+      const token = await generateJWT({email: result[0].email, role: result[0].role});
       user.userQuery(`UPDATE users SET token='${token}' WHERE email='${email}';`);
       return res.status(200).json({status: httpStatusText.SUCCESS,msg: "Logged Successfully", data: {token}});
    }

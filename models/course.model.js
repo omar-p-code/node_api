@@ -14,7 +14,7 @@ import mysql from "mysql2";
 
 // export default mongoose.model('Course', courseSchema)
 
-function query(sql, db="node_mysql" , returns=true, host="localhost", user="root", password='puppetmaster0C@') {
+function query(sql, db="node_mysql" , returns=true, host=process.env.HOST, user="root", password=process.env.PASSWORD) {
 const prom = new Promise((res, rej) => {
       const con = mysql.createConnection({
    host: host,

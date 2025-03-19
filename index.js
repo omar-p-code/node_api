@@ -2,9 +2,18 @@ import express from 'express';
 import env from "dotenv";
 import httpStatusText from './utils/httpStatusText.js';
 import cors from "cors";
+import path from 'node:path';
+import {fileURLToPath} from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+// console.log(__filename, import.meta.url)
+const __dirname = path.dirname(__filename);
+// console.log(__dirname)
 
 env.config()
 const app = express();
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+
 // import mongoose from 'mongoose';
 import mysql from 'mysql2';
 const con = mysql.createConnection({
@@ -28,7 +37,7 @@ con.connect(err => {
 //     console.log('mongodb server started')
 // })
 
-app.use(cors())
+app.use(cors());
 app.use(express.json());
 // CRUD (Create / Read / Update / Delete)
 
