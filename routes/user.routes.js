@@ -1,5 +1,6 @@
 import express from 'express';
 import * as usersController from "../controllers/users.controller.js";
+import verifyToken from "../middlewares/verifyToken.js";
 
 const router = express.Router();
 
@@ -10,7 +11,7 @@ const router = express.Router();
 // login
 
 router.route('/')
-   .get(usersController.getAllUsers)
+   .get(verifyToken ,usersController.getAllUsers)
    // Create A New Course
 
 router.route('/register')
